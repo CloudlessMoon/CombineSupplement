@@ -12,7 +12,7 @@ fileprivate var cancellableBagAnyObject: UInt8 = 0
 
 public extension CombineWrapper where Base: AnyObject {
     
-    func synchronizedBag<T>( _ action: () -> T) -> T {
+    fileprivate func synchronizedBag<T>( _ action: () -> T) -> T {
         objc_sync_enter(self); defer { objc_sync_exit(self) }
         return action()
     }

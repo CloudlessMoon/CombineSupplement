@@ -15,14 +15,14 @@ public protocol CancellableBag: AnyObject {
     var cancellableBag: Set<AnyCancellable> { get set }
 }
 
-extension CancellableBag {
+public extension CancellableBag {
     
     fileprivate func synchronizedBag<T>( _ action: () -> T) -> T {
         objc_sync_enter(self); defer { objc_sync_exit(self) }
         return action()
     }
     
-    public var cancellableBag: Set<AnyCancellable> {
+    var cancellableBag: Set<AnyCancellable> {
         get {
             return self.synchronizedBag {
                 if let cancellableBag = objc_getAssociatedObject(self, &cancellableBagContext) as? Set<AnyCancellable> {
