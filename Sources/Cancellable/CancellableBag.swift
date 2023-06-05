@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-fileprivate var cancellableBagContext: UInt8 = 0
+private var cancellableBagContext: UInt8 = 0
 
 public protocol CancellableBag: AnyObject {
     
@@ -34,11 +34,9 @@ public extension CancellableBag {
             }
         }
         set {
-            self.synchronizedBag  {
+            self.synchronizedBag {
                 objc_setAssociatedObject(self, &cancellableBagContext, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             }
         }
     }
 }
-
-

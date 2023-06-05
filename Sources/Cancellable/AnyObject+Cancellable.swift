@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 
-fileprivate var cancellableBagAnyObject: UInt8 = 0
+private var cancellableBagAnyObject: UInt8 = 0
 
 public extension CombineWrapper where Base: AnyObject {
     
@@ -29,7 +29,7 @@ public extension CombineWrapper where Base: AnyObject {
             }
         }
         set {
-            self.synchronizedBag  {
+            self.synchronizedBag {
                 objc_setAssociatedObject(self.base, &cancellableBagAnyObject, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             }
         }
