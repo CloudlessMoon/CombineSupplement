@@ -19,6 +19,7 @@ Pod::Spec.new do |s|
 
     s.subspec "PropertyWrapper" do |ss|
         ss.source_files = "Sources/PropertyWrapper/**/*.{swift}"
+        ss.dependency "CombineSupplement/Core"
     end
 
     s.subspec "Cancellable" do |ss|
