@@ -19,7 +19,7 @@ class ExampleViewController: UIViewController {
         super.viewDidLoad()
         self.view.backgroundColor = .white
         
-        self.exampleView.$text
+        self.exampleView.$text.publisher
             .sink { [weak self] text in
                 guard let self = self else { return }
                 print("\(self.exampleView.text)")

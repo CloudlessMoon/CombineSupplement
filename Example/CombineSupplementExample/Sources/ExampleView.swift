@@ -10,7 +10,18 @@ import CombineSupplement
 
 class ExampleView: UIView {
 
-    @CurrentValueSubjected fileprivate(set) var text: String = "1"
+    @CurrentValueSubjectWrapper
+    fileprivate(set) var text: String = "1"
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        self.$text.dataQueue = DispatchQueue(label: "test")
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
 
 }
 
