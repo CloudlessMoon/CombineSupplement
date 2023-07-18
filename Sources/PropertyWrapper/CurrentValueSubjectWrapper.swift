@@ -14,19 +14,19 @@ import Combine
     
     public var wrappedValue: Element {
         get {
-            guard let dataQueue = self.projectedValue.dataQueue else {
+            guard let queue = self.projectedValue.queue else {
                 return self.projectedValue.currentValueSubject.value
             }
-            return dataQueue.combine.safeSync {
+            return queue.combine.safeSync {
                 return self.projectedValue.currentValueSubject.value
             }
         }
         set {
-            guard let dataQueue = self.projectedValue.dataQueue else {
+            guard let queue = self.projectedValue.queue else {
                 self.projectedValue.currentValueSubject.send(newValue)
                 return
             }
-            dataQueue.combine.safeSync {
+            queue.combine.safeSync {
                 self.projectedValue.currentValueSubject.send(newValue)
             }
         }
@@ -40,16 +40,16 @@ import Combine
 
 public final class CurrentValueSubjectProjected<Element> {
     
-    private var _dataQueue: DispatchQueue?
-    public var dataQueue: DispatchQueue? {
+    private var _queue: DispatchQueue?
+    public var queue: DispatchQueue? {
         get {
             self.lock.lock(); defer { self.lock.unlock() }
-            return self._dataQueue
+            return self._queue
         }
         set {
             self.lock.lock(); defer { self.lock.unlock() }
-            self._dataQueue = newValue
-            self._dataQueue?.combine.registerSpecific()
+            self._queue = newValue
+            self._queue?.combine.registerSpecific()
         }
     }
     

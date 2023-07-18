@@ -9,20 +9,20 @@ import UIKit
 import CombineSupplement
 
 class ExampleView: UIView {
-
+    
     @CurrentValueSubjectWrapper
     fileprivate(set) var text: String = "1"
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-
-        self.$text.dataQueue = DispatchQueue(label: "test")
+        
+        self.$text.queue = DispatchQueue(label: "test")
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
-
+    
 }
 
 extension ExampleView {
