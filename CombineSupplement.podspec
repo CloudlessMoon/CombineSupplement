@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name                  = "CombineSupplement"
-    s.version               = "0.0.3"
+    s.version               = "0.0.5"
     s.summary               = "Combine Supplement"
     s.homepage              = "https://github.com/jiasongs/CombineSupplement"
     s.license               = "MIT"

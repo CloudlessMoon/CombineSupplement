@@ -49,6 +49,7 @@ public final class CurrentValueSubjectProjected<Element> {
         set {
             self.lock.lock(); defer { self.lock.unlock() }
             self._dataQueue = newValue
+            self._dataQueue?.combine.registerSpecific()
         }
     }
     
