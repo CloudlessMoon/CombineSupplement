@@ -53,8 +53,8 @@ public final class CurrentValueSubjectProjected<Element> {
         }
     }
     
-    public var publisher: any Publisher<Element, Never> {
-        return self.currentValueSubject
+    public var publisher: AnyPublisher<Element, Never> {
+        return self.currentValueSubject.eraseToAnyPublisher()
     }
     
     fileprivate let currentValueSubject: CurrentValueSubject<Element, Never>
