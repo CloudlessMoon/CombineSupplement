@@ -27,6 +27,14 @@ class ExampleViewController: UIViewController {
             }
             .store(in: &self.combine.cancellableBag)
         
+        self.exampleView.$text.publisher
+            .sink { [weak self] text in
+                guard let self = self else { return }
+                print("\(self.exampleView.text)")
+                print("\(text)")
+            }
+            .store(in: &self.combine.cancellableBag)
+        
         self.exampleView.setText("123")
     }
     

@@ -8,13 +8,15 @@
 import Foundation
 import Combine
 
+public typealias AnyCancellables = [AnyCancellable]
+
 private struct CancellableAssociatedKeys {
     static var bag: String = "combine_cancellable_bag"
 }
 
 public protocol CancellableBag: AnyObject {
     
-    var cancellableBag: Set<AnyCancellable> { get set }
+    var cancellableBag: AnyCancellables { get set }
 }
 
 public extension CancellableBag {
@@ -24,13 +26,13 @@ public extension CancellableBag {
         return action()
     }
     
-    var cancellableBag: Set<AnyCancellable> {
+    var cancellableBag: AnyCancellables {
         get {
             return self.synchronizedBag {
-                if let cancellableBag = objc_getAssociatedObject(self, &CancellableAssociatedKeys.bag) as? Set<AnyCancellable> {
+                if let cancellableBag = objc_getAssociatedObject(self, &CancellableAssociatedKeys.bag) as? AnyCancellables {
                     return cancellableBag
                 }
-                let cancellableBag = Set<AnyCancellable>()
+                let cancellableBag: AnyCancellables = []
                 objc_setAssociatedObject(self, &CancellableAssociatedKeys.bag, cancellableBag, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
                 return cancellableBag
             }
