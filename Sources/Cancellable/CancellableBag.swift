@@ -11,7 +11,7 @@ import Combine
 public typealias AnyCancellables = [AnyCancellable]
 
 private struct CancellableAssociatedKeys {
-    static var bag: String = "combine_cancellable_bag"
+    static var bag = true
 }
 
 public protocol CancellableBag: AnyObject {

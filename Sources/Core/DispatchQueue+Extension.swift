@@ -16,7 +16,7 @@ private final class QueueReference {
 }
 
 private struct QueueAssociatedKeys {
-    static var specific: String = "combine_specific_key"
+    static var specific = true
 }
 
 extension CombineWrapper where Base: DispatchQueue {
