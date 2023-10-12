@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 private struct CancellableAssociatedKeys {
-    static var bag = true
+    static var bag: UInt8 = 0
 }
 
 public extension CombineWrapper where Base: AnyObject {
