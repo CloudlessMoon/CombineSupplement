@@ -38,4 +38,9 @@ class ExampleViewController: UIViewController {
         self.exampleView.setText("123")
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.exampleView = ExampleView()
+    }
+    
 }
