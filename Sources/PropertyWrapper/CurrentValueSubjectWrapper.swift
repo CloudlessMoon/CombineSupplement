@@ -17,6 +17,7 @@ import Combine
             guard let queue = self.projectedValue.queue else {
                 return self.projectedValue.currentValueSubject.value
             }
+            
             return queue.combine.safeSync {
                 return self.projectedValue.currentValueSubject.value
             }
@@ -26,6 +27,7 @@ import Combine
                 self.projectedValue.currentValueSubject.send(newValue)
                 return
             }
+            
             queue.combine.safeSync {
                 self.projectedValue.currentValueSubject.send(newValue)
             }
@@ -49,7 +51,6 @@ public final class CurrentValueSubjectProjected<Element> {
         set {
             self.lock.lock(); defer { self.lock.unlock() }
             self._queue = newValue
-            self._queue?.combine.registerSpecific()
         }
     }
     
