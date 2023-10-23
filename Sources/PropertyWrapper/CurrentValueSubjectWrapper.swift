@@ -10,7 +10,7 @@ import Combine
 
 @propertyWrapper public final class CurrentValueSubjectWrapper<Element> {
     
-    public fileprivate(set) var projectedValue: CurrentValueSubjectProjected<Element>
+    public private(set) var projectedValue: CurrentValueSubjectProjected<Element>
     
     public var wrappedValue: Element {
         get {
