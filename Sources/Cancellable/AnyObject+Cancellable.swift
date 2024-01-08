@@ -10,18 +10,14 @@ import Combine
 
 private struct CancellableAssociatedKeys {
     static var bag: UInt8 = 0
+    static var lock: UInt8 = 0
 }
 
 public extension CombineWrapper where Base: AnyObject {
     
-    private func synchronizedBag<T>( _ action: () -> T) -> T {
-        objc_sync_enter(self.base); defer { objc_sync_exit(self.base) }
-        return action()
-    }
-    
     var cancellableBag: AnyCancellables {
         get {
-            return self.synchronizedBag {
+            return self.safeValue {
                 if let cancellableBag = objc_getAssociatedObject(self.base, &CancellableAssociatedKeys.bag) as? AnyCancellables {
                     return cancellableBag
                 }
@@ -31,10 +27,25 @@ public extension CombineWrapper where Base: AnyObject {
             }
         }
         set {
-            self.synchronizedBag {
+            self.safeValue {
                 objc_setAssociatedObject(self.base, &CancellableAssociatedKeys.bag, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             }
         }
+    }
+    
+    private var lock: NSLock {
+        let initialize = {
+            let value = NSLock()
+            value.name = "com.ruanmei.combine-supplement.cancellable-bag"
+            objc_setAssociatedObject(self.base, &CancellableAssociatedKeys.lock, value, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            return value
+        }
+        return (objc_getAssociatedObject(self.base, &CancellableAssociatedKeys.lock) as? NSLock) ?? initialize()
+    }
+    
+    private func safeValue<T>(execute work: () -> T) -> T {
+        self.lock.lock(); defer { self.lock.unlock() }
+        return work()
     }
     
 }

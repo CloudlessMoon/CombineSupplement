@@ -8,11 +8,12 @@
 import Foundation
 import Combine
 
-public typealias AnyCancellables = [AnyCancellable]
-
 private struct CancellableAssociatedKeys {
     static var bag: UInt8 = 0
+    static var lock: UInt8 = 0
 }
+
+public typealias AnyCancellables = [AnyCancellable]
 
 public protocol CancellableBag: AnyObject {
     
@@ -21,14 +22,9 @@ public protocol CancellableBag: AnyObject {
 
 public extension CancellableBag {
     
-    private func synchronizedBag<T>( _ action: () -> T) -> T {
-        objc_sync_enter(self); defer { objc_sync_exit(self) }
-        return action()
-    }
-    
     var cancellableBag: AnyCancellables {
         get {
-            return self.synchronizedBag {
+            return self.safeValue {
                 if let cancellableBag = objc_getAssociatedObject(self, &CancellableAssociatedKeys.bag) as? AnyCancellables {
                     return cancellableBag
                 }
@@ -38,9 +34,24 @@ public extension CancellableBag {
             }
         }
         set {
-            self.synchronizedBag {
+            self.safeValue {
                 objc_setAssociatedObject(self, &CancellableAssociatedKeys.bag, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             }
         }
+    }
+    
+    private var lock: NSLock {
+        let initialize = {
+            let value = NSLock()
+            value.name = "com.ruanmei.combine-supplement.cancellable-bag"
+            objc_setAssociatedObject(self, &CancellableAssociatedKeys.lock, value, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            return value
+        }
+        return (objc_getAssociatedObject(self, &CancellableAssociatedKeys.lock) as? NSLock) ?? initialize()
+    }
+    
+    private func safeValue<T>(execute work: () -> T) -> T {
+        self.lock.lock(); defer { self.lock.unlock() }
+        return work()
     }
 }
