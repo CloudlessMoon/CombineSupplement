@@ -16,10 +16,10 @@ public struct MainScheduler: Sendable {
     private static var detectionKey = DispatchSpecificKey<UInt8>()
     private static var detectionValue: UInt8 = 0
     
-    private var isAsynchronous: Bool
+    private var canAsynchronous: Bool
     
     private init(asynchronous: Bool? = false) {
-        self.isAsynchronous = asynchronous ?? false
+        self.canAsynchronous = asynchronous ?? false
         DispatchQueue.main.setSpecific(key: Self.detectionKey, value: Self.detectionValue)
     }
     
@@ -27,8 +27,8 @@ public struct MainScheduler: Sendable {
 
 extension MainScheduler: Scheduler {
     
-    public typealias SchedulerOptions = DispatchQueue.SchedulerOptions
     public typealias SchedulerTimeType = DispatchQueue.SchedulerTimeType
+    public typealias SchedulerOptions = DispatchQueue.SchedulerOptions
     
     public var now: SchedulerTimeType {
         return DispatchQueue.main.now
@@ -39,7 +39,7 @@ extension MainScheduler: Scheduler {
     }
     
     public func schedule(options: SchedulerOptions?, _ action: @escaping () -> Void) {
-        if !self.isAsynchronous && DispatchQueue.safeGetSpecific(key: Self.detectionKey) == Self.detectionValue {
+        if !self.canAsynchronous && DispatchQueue.safeGetSpecific(key: Self.detectionKey) == Self.detectionValue {
             action()
         } else {
             DispatchQueue.main.schedule(options: options, action)
