@@ -29,5 +29,6 @@ Pod::Spec.new do |s|
 
     s.subspec "Scheduler" do |ss|
         ss.source_files = "Sources/Scheduler/**/*.{swift}"
+        ss.dependency "CombineSupplement/Core"
     end
 end
