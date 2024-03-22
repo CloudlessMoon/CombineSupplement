@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name                  = "CombineSupplement"
-    s.version               = "0.1.3"
+    s.version               = "0.1.5"
     s.summary               = "Combine Supplement"
     s.homepage              = "https://github.com/jiasongs/CombineSupplement"
     s.license               = "MIT"
@@ -25,5 +25,9 @@ Pod::Spec.new do |s|
     s.subspec "Cancellable" do |ss|
         ss.source_files = "Sources/Cancellable/**/*.{swift}"
         ss.dependency "CombineSupplement/Core"
+    end
+
+    s.subspec "Scheduler" do |ss|
+        ss.source_files = "Sources/Scheduler/**/*.{swift}"
     end
 end

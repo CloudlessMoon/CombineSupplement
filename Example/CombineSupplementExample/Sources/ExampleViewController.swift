@@ -20,6 +20,7 @@ class ExampleViewController: UIViewController {
         self.view.backgroundColor = .white
         
         self.exampleView.$text.publisher
+            .receive(on: MainScheduler.instance)
             .sink { [weak self] text in
                 guard let self = self else { return }
                 print("\(self.exampleView.text)")
