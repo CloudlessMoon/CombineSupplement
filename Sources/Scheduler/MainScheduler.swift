@@ -18,8 +18,8 @@ public struct MainScheduler: Sendable {
     
     private var isAsynchronous: Bool
     
-    private init(asynchronous: Bool? = false) {
-        self.isAsynchronous = asynchronous ?? false
+    private init(asynchronous: Bool = false) {
+        self.isAsynchronous = asynchronous
         DispatchQueue.main.setSpecific(key: Self.detectionKey, value: Self.detectionValue)
     }
     
