@@ -13,14 +13,10 @@ public struct MainScheduler: Sendable {
     public static let instance = MainScheduler()
     public static let asyncInstance = MainScheduler(asynchronous: true)
     
-    private static var detectionKey = DispatchSpecificKey<UInt8>()
-    private static var detectionValue: UInt8 = 0
-    
     private var isAsynchronous: Bool
     
     private init(asynchronous: Bool = false) {
         self.isAsynchronous = asynchronous
-        DispatchQueue.main.setSpecific(key: Self.detectionKey, value: Self.detectionValue)
     }
     
 }
@@ -39,7 +35,7 @@ extension MainScheduler: Scheduler {
     }
     
     public func schedule(options: SchedulerOptions?, _ action: @escaping () -> Void) {
-        if !self.isAsynchronous && DispatchQueue.safeGetSpecific(key: Self.detectionKey) == Self.detectionValue {
+        if !self.isAsynchronous && DispatchQueue.combine.isMain {
             action()
         } else {
             DispatchQueue.main.schedule(options: options, action)

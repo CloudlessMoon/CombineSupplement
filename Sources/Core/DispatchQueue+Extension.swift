@@ -25,11 +25,17 @@ private struct QueueAssociatedKeys {
     static var lock: UInt8 = 0
 }
 
-internal extension DispatchQueue {
+fileprivate extension DispatchQueue {
     private static let __combine_specificLock: os_unfair_lock_t = {
         let lock: os_unfair_lock_t = .allocate(capacity: 1)
         lock.initialize(to: os_unfair_lock())
         return lock
+    }()
+    
+    static var mainKey: DispatchSpecificKey<UInt8> = {
+        let key = DispatchSpecificKey<UInt8>()
+        DispatchQueue.main.setSpecific(key: key, value: 0)
+        return key
     }()
     
     static func safeGetSpecific<T>(key: DispatchSpecificKey<T>) -> T? {
@@ -42,6 +48,10 @@ internal extension DispatchQueue {
 }
 
 extension CombineWrapper where Base: DispatchQueue {
+    
+    internal static var isMain: Bool {
+        return Base.safeGetSpecific(key: Base.mainKey) == 0
+    }
     
     @discardableResult
     internal func safeSync<T>(execute work: () -> T) -> T {
