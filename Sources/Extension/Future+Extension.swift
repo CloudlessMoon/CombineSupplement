@@ -10,7 +10,7 @@ import Combine
 
 extension Future {
     
-    public convenience init(on queue: DispatchQueue, _ attemptToFulfill: @escaping (@escaping Future<Output, Failure>.Promise) -> Void) {
+    private convenience init(on queue: DispatchQueue, _ attemptToFulfill: @escaping (@escaping Future<Output, Failure>.Promise) -> Void) {
         self.init { promise in
             queue.async {
                 attemptToFulfill(promise)
@@ -19,7 +19,7 @@ extension Future {
     }
     
     @discardableResult
-    public func finally(_ handler: (() -> Void)? = nil) -> AnyCancellable {
+    private func finally(_ handler: (() -> Void)? = nil) -> AnyCancellable {
         return self.sink { completion in
             guard case .finished  = completion else {
                 return
