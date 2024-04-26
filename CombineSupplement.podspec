@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name                  = "CombineSupplement"
-    s.version               = "0.1.6"
+    s.version               = "0.2.0"
     s.summary               = "Combine Supplement"
     s.homepage              = "https://github.com/jiasongs/CombineSupplement"
     s.license               = "MIT"
@@ -17,9 +17,14 @@ Pod::Spec.new do |s|
         ss.source_files = "Sources/Core/**/*.{swift}"
     end
 
+    s.subspec "Replay" do |ss|
+        ss.source_files = "Sources/Replay/**/*.{swift}"
+        ss.dependency "CombineSupplement/Core"
+    end
+
     s.subspec "PropertyWrapper" do |ss|
         ss.source_files = "Sources/PropertyWrapper/**/*.{swift}"
-        ss.dependency "CombineSupplement/Core"
+        ss.dependency "CombineSupplement/Replay"
     end
 
     s.subspec "Cancellable" do |ss|

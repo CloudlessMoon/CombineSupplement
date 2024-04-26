@@ -10,7 +10,7 @@ import CombineSupplement
 
 class ExampleView: UIView {
     
-    @CurrentValueSubjectWrapper
+    @CurrentValueRelayWrapper
     fileprivate(set) var text: String = "1"
     
     override init(frame: CGRect) {
