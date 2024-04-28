@@ -12,6 +12,9 @@ Pod::Spec.new do |s|
     s.static_framework      = true
     s.requires_arc          = true
     s.framework             = "Combine"
+    s.pod_target_xcconfig   = { 
+        'SWIFT_INSTALL_OBJC_HEADER' => 'NO'
+    }
 
     s.subspec "Core" do |ss|
         ss.source_files = "Sources/Core/**/*.{swift}"
