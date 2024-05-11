@@ -24,7 +24,7 @@ public extension AnyCancellableBag {
     
     var cancellableBag: AnyCancellables {
         get {
-            return self.safeValue {
+            return self.lock.withLock {
                 if let cancellableBag = objc_getAssociatedObject(self, &AnyCancellableBagAssociatedKeys.bag) as? AnyCancellables {
                     return cancellableBag
                 }
@@ -34,7 +34,7 @@ public extension AnyCancellableBag {
             }
         }
         set {
-            self.safeValue {
+            self.lock.withLock {
                 objc_setAssociatedObject(self, &AnyCancellableBagAssociatedKeys.bag, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             }
         }
@@ -43,15 +43,10 @@ public extension AnyCancellableBag {
     private var lock: NSLock {
         let initialize = {
             let value = NSLock()
-            value.name = "com.ruanmei.combine-supplement.any-cancellable-bag"
             objc_setAssociatedObject(self, &AnyCancellableBagAssociatedKeys.lock, value, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             return value
         }
         return (objc_getAssociatedObject(self, &AnyCancellableBagAssociatedKeys.lock) as? NSLock) ?? initialize()
     }
     
-    private func safeValue<T>(execute work: () -> T) -> T {
-        self.lock.lock(); defer { self.lock.unlock() }
-        return work()
-    }
 }

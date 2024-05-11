@@ -17,7 +17,7 @@ public extension CombineWrapper where Base: AnyObject {
     
     var cancellableBag: AnyCancellables {
         get {
-            return self.safeValue {
+            return self.lock.withLock {
                 if let cancellableBag = objc_getAssociatedObject(self.base, &CancellableAssociatedKeys.bag) as? AnyCancellables {
                     return cancellableBag
                 }
@@ -27,7 +27,7 @@ public extension CombineWrapper where Base: AnyObject {
             }
         }
         set {
-            self.safeValue {
+            self.lock.withLock {
                 objc_setAssociatedObject(self.base, &CancellableAssociatedKeys.bag, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             }
         }
@@ -36,16 +36,10 @@ public extension CombineWrapper where Base: AnyObject {
     private var lock: NSLock {
         let initialize = {
             let value = NSLock()
-            value.name = "com.ruanmei.combine-supplement.cancellable-bag"
             objc_setAssociatedObject(self.base, &CancellableAssociatedKeys.lock, value, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             return value
         }
         return (objc_getAssociatedObject(self.base, &CancellableAssociatedKeys.lock) as? NSLock) ?? initialize()
-    }
-    
-    private func safeValue<T>(execute work: () -> T) -> T {
-        self.lock.lock(); defer { self.lock.unlock() }
-        return work()
     }
     
 }
