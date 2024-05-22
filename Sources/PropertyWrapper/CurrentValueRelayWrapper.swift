@@ -46,24 +46,11 @@ public final class CurrentValueRelayProjected<Element> {
     
     fileprivate let relay: CurrentValueRelay<Element>
     
-    private lazy var lock: os_unfair_lock_t = {
-        let lock: os_unfair_lock_t = .allocate(capacity: 1)
-        lock.initialize(to: os_unfair_lock())
-        return lock
-    }()
+    private let lock: AllocatedUnfairLock
     
     fileprivate init(wrappedValue: Element) {
         self.relay = CurrentValueRelay(value: wrappedValue)
-    }
-    
-    deinit {
-        self.lock.deinitialize(count: 1)
-        self.lock.deallocate()
-    }
-    
-    private func safeValue<T>(execute work: () -> T) -> T {
-        os_unfair_lock_lock(self.lock); defer { os_unfair_lock_unlock(self.lock) }
-        return work()
+        self.lock = AllocatedUnfairLock()
     }
     
 }
@@ -72,12 +59,12 @@ extension CurrentValueRelayProjected {
     
     public var queue: DispatchQueue? {
         get {
-            self.safeValue {
+            self.lock.withLock {
                 return self._queue
             }
         }
         set {
-            self.safeValue {
+            self.lock.withLock {
                 self._queue = newValue
             }
         }

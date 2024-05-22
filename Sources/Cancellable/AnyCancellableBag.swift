@@ -40,13 +40,13 @@ public extension AnyCancellableBag {
         }
     }
     
-    private var lock: NSLock {
+    private var lock: AllocatedUnfairLock {
         let initialize = {
-            let value = NSLock()
+            let value = AllocatedUnfairLock()
             objc_setAssociatedObject(self, &AnyCancellableBagAssociatedKeys.lock, value, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             return value
         }
-        return (objc_getAssociatedObject(self, &AnyCancellableBagAssociatedKeys.lock) as? NSLock) ?? initialize()
+        return (objc_getAssociatedObject(self, &AnyCancellableBagAssociatedKeys.lock) as? AllocatedUnfairLock) ?? initialize()
     }
     
 }

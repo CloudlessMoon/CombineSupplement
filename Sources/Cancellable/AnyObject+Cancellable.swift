@@ -33,13 +33,13 @@ public extension CombineWrapper where Base: AnyObject {
         }
     }
     
-    private var lock: NSLock {
+    private var lock: AllocatedUnfairLock {
         let initialize = {
-            let value = NSLock()
+            let value = AllocatedUnfairLock()
             objc_setAssociatedObject(self.base, &CancellableAssociatedKeys.lock, value, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             return value
         }
-        return (objc_getAssociatedObject(self.base, &CancellableAssociatedKeys.lock) as? NSLock) ?? initialize()
+        return (objc_getAssociatedObject(self.base, &CancellableAssociatedKeys.lock) as? AllocatedUnfairLock) ?? initialize()
     }
     
 }
