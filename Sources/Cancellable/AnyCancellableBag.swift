@@ -9,7 +9,6 @@ import Foundation
 import Combine
 
 private struct AnyCancellableBagAssociatedKeys {
-    static var bag: UInt8 = 0
     static var lock: UInt8 = 0
 }
 
@@ -24,29 +23,20 @@ public extension AnyCancellableBag {
     
     var cancellableBag: AnyCancellables {
         get {
-            return self.lock.withLock {
-                if let cancellableBag = objc_getAssociatedObject(self, &AnyCancellableBagAssociatedKeys.bag) as? AnyCancellables {
-                    return cancellableBag
-                }
-                let cancellableBag: AnyCancellables = []
-                objc_setAssociatedObject(self, &AnyCancellableBagAssociatedKeys.bag, cancellableBag, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-                return cancellableBag
-            }
+            self.lock.withLock { $0 }
         }
         set {
-            self.lock.withLock {
-                objc_setAssociatedObject(self, &AnyCancellableBagAssociatedKeys.bag, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            }
+            self.lock.withLock { $0 = newValue }
         }
     }
     
-    private var lock: AllocatedUnfairLock {
+    private var lock: AllocatedUnfairLock<AnyCancellables> {
         let initialize = {
-            let value = AllocatedUnfairLock()
+            let value = AllocatedUnfairLock(state: AnyCancellables())
             objc_setAssociatedObject(self, &AnyCancellableBagAssociatedKeys.lock, value, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             return value
         }
-        return (objc_getAssociatedObject(self, &AnyCancellableBagAssociatedKeys.lock) as? AllocatedUnfairLock) ?? initialize()
+        return (objc_getAssociatedObject(self, &AnyCancellableBagAssociatedKeys.lock) as? AllocatedUnfairLock<AnyCancellables>) ?? initialize()
     }
     
 }

@@ -42,15 +42,13 @@ import Combine
 
 public final class CurrentValueRelayProjected<Element> {
     
-    private var _queue: DispatchQueue?
-    
     fileprivate let relay: CurrentValueRelay<Element>
     
-    private let lock: AllocatedUnfairLock
+    private let lock: AllocatedUnfairLock<DispatchQueue?>
     
     fileprivate init(wrappedValue: Element) {
         self.relay = CurrentValueRelay(value: wrappedValue)
-        self.lock = AllocatedUnfairLock()
+        self.lock = AllocatedUnfairLock(state: nil)
     }
     
 }
@@ -59,14 +57,10 @@ extension CurrentValueRelayProjected {
     
     public var queue: DispatchQueue? {
         get {
-            self.lock.withLock {
-                return self._queue
-            }
+            self.lock.withLock { $0 }
         }
         set {
-            self.lock.withLock {
-                self._queue = newValue
-            }
+            self.lock.withLock { $0 = newValue }
         }
     }
     
