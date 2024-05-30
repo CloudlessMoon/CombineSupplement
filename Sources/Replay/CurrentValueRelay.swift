@@ -28,7 +28,7 @@ public final class CurrentValueRelay<Output>: Publisher {
         self.subject.send(value)
     }
     
-    public func receive<S>(subscriber: S) where S : Subscriber, Never == S.Failure, Output == S.Input {
+    public func receive<S>(subscriber: S) where S: Subscriber, Never == S.Failure, Output == S.Input {
         self.subject.receive(subscriber: subscriber)
     }
     

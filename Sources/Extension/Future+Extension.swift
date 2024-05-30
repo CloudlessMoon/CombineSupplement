@@ -21,7 +21,7 @@ extension Future {
     @discardableResult
     private func finally(_ handler: (() -> Void)? = nil) -> AnyCancellable {
         return self.sink { completion in
-            guard case .finished  = completion else {
+            guard case .finished = completion else {
                 return
             }
             handler?()
