@@ -11,7 +11,7 @@ import ThreadSafe
 
 @propertyWrapper public final class CurrentValueRelayWrapper<Element> {
     
-    public private(set) var projectedValue: CurrentValueRelayProjected<Element>
+    public let projectedValue: CurrentValueRelayProjected<Element>
     
     public var wrappedValue: Element {
         get {
