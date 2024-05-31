@@ -15,8 +15,6 @@ class ExampleView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
-        self.$text.queue = DispatchQueue(label: "test")
     }
     
     required init?(coder: NSCoder) {

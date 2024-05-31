@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import ThreadSafe
 
 @propertyWrapper public final class CurrentValueRelayWrapper<Element> {
     
@@ -14,58 +15,42 @@ import Combine
     
     public var wrappedValue: Element {
         get {
-            guard let queue = self.projectedValue.queue else {
-                return self.projectedValue.relay.value
-            }
-            
-            return queue.combine.safeSync {
-                return self.projectedValue.relay.value
-            }
+            return self.projectedValue.value
         }
         set {
-            guard let queue = self.projectedValue.queue else {
-                self.projectedValue.relay.send(newValue)
-                return
-            }
-            
-            queue.combine.safeSync {
-                self.projectedValue.relay.send(newValue)
-            }
+            self.projectedValue.value = newValue
         }
     }
     
-    public init(wrappedValue: Element) {
-        self.projectedValue = CurrentValueRelayProjected(wrappedValue: wrappedValue)
+    public init(wrappedValue: Element, taskLabel: String? = nil) {
+        self.projectedValue = CurrentValueRelayProjected(wrappedValue: wrappedValue, taskLabel: taskLabel)
     }
     
 }
 
 public final class CurrentValueRelayProjected<Element> {
     
-    fileprivate let relay: CurrentValueRelay<Element>
-    
-    private let lock: AllocatedUnfairLock<DispatchQueue?>
-    
-    fileprivate init(wrappedValue: Element) {
-        self.relay = CurrentValueRelay(value: wrappedValue)
-        self.lock = AllocatedUnfairLock(state: nil)
-    }
-    
-}
-
-extension CurrentValueRelayProjected {
-    
-    public var queue: DispatchQueue? {
-        get {
-            self.lock.withLock { $0 }
-        }
-        set {
-            self.lock.withLock { $0 = newValue }
-        }
-    }
+    @UnfairLockValueWrapper
+    public var task: ReadWriteTask
     
     public var publisher: AnyPublisher<Element, Never> {
         return self.relay.eraseToAnyPublisher()
+    }
+    
+    private let relay: CurrentValueRelay<Element>
+    
+    fileprivate init(wrappedValue: Element, taskLabel: String? = nil) {
+        self.relay = CurrentValueRelay(value: wrappedValue)
+        self.task = ReadWriteTask(label: taskLabel ?? "com.jiasong.combine-supplement.current-value-relay")
+    }
+    
+    fileprivate var value: Element {
+        get {
+            return self.task.read { self.relay.value }
+        }
+        set {
+            self.task.write { self.relay.send(newValue) }
+        }
     }
     
 }

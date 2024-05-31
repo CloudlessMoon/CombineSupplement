@@ -7,29 +7,30 @@
 
 import Foundation
 import Combine
+import ThreadSafe
 
-private struct CancellableAssociatedKeys {
-    static var lock: UInt8 = 0
+private struct AssociatedKeys {
+    static var readWrite: UInt8 = 0
 }
 
 public extension CombineWrapper where Base: AnyObject {
     
     var cancellableBag: AnyCancellables {
         get {
-            self.lock.withLock { $0 }
+            return self.readWrite.value
         }
         set {
-            self.lock.withLock { $0 = newValue }
+            self.readWrite.value = newValue
         }
     }
     
-    private var lock: AllocatedUnfairLock<AnyCancellables> {
+    private var readWrite: ReadWriteValue<AnyCancellables> {
         let initialize = {
-            let value = AllocatedUnfairLock(state: AnyCancellables())
-            objc_setAssociatedObject(self.base, &CancellableAssociatedKeys.lock, value, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            let value = ReadWriteValue(AnyCancellables(), taskLabel: "com.jiasong.combine-supplement.any-cancellable-bag")
+            objc_setAssociatedObject(self.base, &AssociatedKeys.readWrite, value, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             return value
         }
-        return (objc_getAssociatedObject(self.base, &CancellableAssociatedKeys.lock) as? AllocatedUnfairLock<AnyCancellables>) ?? initialize()
+        return (objc_getAssociatedObject(self.base, &AssociatedKeys.readWrite) as? ReadWriteValue<AnyCancellables>) ?? initialize()
     }
     
 }
