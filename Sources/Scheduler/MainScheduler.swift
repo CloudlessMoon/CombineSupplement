@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import ThreadSafe
 
 public struct MainScheduler: Sendable {
     
@@ -35,7 +36,7 @@ extension MainScheduler: Scheduler {
     }
     
     public func schedule(options: SchedulerOptions?, _ action: @escaping () -> Void) {
-        if !self.isAsynchronous && DispatchQueue.combine.isMain {
+        if !self.isAsynchronous && DispatchQueue.threadSafe.isMain {
             action()
         } else {
             DispatchQueue.main.schedule(options: options, action)

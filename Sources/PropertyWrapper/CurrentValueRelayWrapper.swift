@@ -22,8 +22,8 @@ import ThreadSafe
         }
     }
     
-    public init(wrappedValue: Element, taskLabel: String? = nil) {
-        self.projectedValue = CurrentValueRelayProjected(wrappedValue: wrappedValue, taskLabel: taskLabel)
+    public init(wrappedValue: Element, task: ReadWriteTask = .init(label: "com.jiasong.combine-supplement.current-value-relay")) {
+        self.projectedValue = CurrentValueRelayProjected(wrappedValue: wrappedValue, task: task)
     }
     
 }
@@ -39,9 +39,9 @@ public final class CurrentValueRelayProjected<Element> {
     
     private let relay: CurrentValueRelay<Element>
     
-    fileprivate init(wrappedValue: Element, taskLabel: String? = nil) {
+    fileprivate init(wrappedValue: Element, task: ReadWriteTask) {
         self.relay = CurrentValueRelay(value: wrappedValue)
-        self.task = ReadWriteTask(label: taskLabel ?? "com.jiasong.combine-supplement.current-value-relay")
+        self.task = task
     }
     
     fileprivate var value: Element {

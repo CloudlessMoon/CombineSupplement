@@ -33,7 +33,7 @@ public extension AnyCancellableBag {
     
     private var readWrite: ReadWriteValue<AnyCancellables> {
         let initialize = {
-            let value = ReadWriteValue(AnyCancellables(), taskLabel: "com.jiasong.combine-supplement.any-cancellable-bag")
+            let value = ReadWriteValue(AnyCancellables(), task: ReadWriteTask(label: "com.jiasong.combine-supplement.any-cancellable-bag"))
             objc_setAssociatedObject(self, &AssociatedKeys.readWrite, value, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             return value
         }
