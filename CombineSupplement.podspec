@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name                  = "CombineSupplement"
-    s.version               = "0.2.3"
+    s.version               = "0.2.4"
     s.summary               = "Combine Supplement"
     s.homepage              = "https://github.com/jiasongs/CombineSupplement"
     s.license               = "MIT"
@@ -16,9 +16,11 @@ Pod::Spec.new do |s|
         'SWIFT_INSTALL_OBJC_HEADER' => 'NO'
     }
 
+    # Core dependency
+    s.dependency "ThreadSafe", "~> 1.0"
+
     s.subspec "Core" do |ss|
         ss.source_files = "Sources/Core/**/*.{swift}"
-        ss.dependency "ThreadSafe", "~> 1.0"
     end
 
     s.subspec "Replay" do |ss|
