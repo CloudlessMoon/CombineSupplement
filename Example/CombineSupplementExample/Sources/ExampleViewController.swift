@@ -26,7 +26,7 @@ class ExampleViewController: UIViewController {
                 print("\(self.exampleView.text)")
                 print("\(text)")
             }
-            .store(in: &self.combine.cancellableBag)
+            .cancelled(by: self.combine.cancellableBag)
         
         self.exampleView.$text.publisher
             .sink { [weak self] text in
@@ -34,7 +34,7 @@ class ExampleViewController: UIViewController {
                 print("\(self.exampleView.text)")
                 print("\(text)")
             }
-            .store(in: &self.combine.cancellableBag)
+            .cancelled(by: self.combine.cancellableBag)
         
         self.exampleView.setText("123")
     }

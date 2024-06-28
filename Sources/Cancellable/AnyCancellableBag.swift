@@ -13,16 +13,14 @@ private struct AssociatedKeys {
     static var readWrite: UInt8 = 0
 }
 
-public typealias AnyCancellables = [AnyCancellable]
-
 public protocol AnyCancellableBag: AnyObject {
     
-    var cancellableBag: AnyCancellables { get set }
+    var cancellableBag: CancellableBag { get set }
 }
 
 public extension AnyCancellableBag {
     
-    var cancellableBag: AnyCancellables {
+    var cancellableBag: CancellableBag {
         get {
             return self.readWrite.value
         }
@@ -31,13 +29,13 @@ public extension AnyCancellableBag {
         }
     }
     
-    private var readWrite: ReadWriteValue<AnyCancellables> {
+    private var readWrite: ReadWriteValue<CancellableBag> {
         let initialize = {
-            let value = ReadWriteValue(AnyCancellables(), task: ReadWriteTask(label: "com.jiasong.combine-supplement.any-cancellable-bag"))
+            let value = ReadWriteValue(CancellableBag(), task: ReadWriteTask(label: "com.jiasong.combine-supplement.cancellable-bag"))
             objc_setAssociatedObject(self, &AssociatedKeys.readWrite, value, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             return value
         }
-        return (objc_getAssociatedObject(self, &AssociatedKeys.readWrite) as? ReadWriteValue<AnyCancellables>) ?? initialize()
+        return (objc_getAssociatedObject(self, &AssociatedKeys.readWrite) as? ReadWriteValue<CancellableBag>) ?? initialize()
     }
     
 }
