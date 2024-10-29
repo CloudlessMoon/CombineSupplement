@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name                  = "CombineSupplement"
-    s.version               = "1.0.1"
+    s.version               = "1.0.2"
     s.summary               = "Combine Supplement"
     s.homepage              = "https://github.com/jiasongs/CombineSupplement"
     s.license               = "MIT"
@@ -12,9 +12,6 @@ Pod::Spec.new do |s|
     s.static_framework      = true
     s.requires_arc          = true
     s.framework             = "Combine"
-    s.pod_target_xcconfig   = { 
-        'SWIFT_INSTALL_OBJC_HEADER' => 'NO'
-    }
 
     # Core dependency
     s.dependency "ThreadSafe", "~> 1.0"
