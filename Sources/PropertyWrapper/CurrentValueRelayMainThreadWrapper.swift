@@ -34,7 +34,7 @@ public final class CurrentValueRelayMainThreadProjected<Element> {
         return self.relay.eraseToAnyPublisher()
     }
     
-    private let task = MainThreadTask()
+    private let task = MainThreadTask.default
     private let relay: CurrentValueRelay<Element>
     
     fileprivate init(wrappedValue: Element) {
