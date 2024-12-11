@@ -14,7 +14,7 @@ public struct MainScheduler: Sendable {
     public static let instance = MainScheduler()
     public static let asyncInstance = MainScheduler(asynchronous: true)
     
-    private var isAsynchronous: Bool
+    private let isAsynchronous: Bool
     
     private init(asynchronous: Bool = false) {
         self.isAsynchronous = asynchronous

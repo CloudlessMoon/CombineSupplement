@@ -15,6 +15,9 @@ class ExampleViewController: UIViewController {
         return ExampleView()
     }()
     
+    @CurrentValueRelayMainThreadWrapper
+    var name: String = "1"
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
@@ -37,6 +40,22 @@ class ExampleViewController: UIViewController {
             .cancelled(by: self.combine.cancellableBag)
         
         self.exampleView.setText("123")
+        
+        self.$name.publisher
+            .receive(on: MainScheduler.instance)
+            .sink {
+                print("name \($0)")
+            }
+            .cancelled(by: self.combine.cancellableBag)
+        
+        for item in 0...1000 {
+            self.name = "\(item)"
+        }
+        for item in 1001...2000 {
+            DispatchQueue.global().async {
+                self.name = "\(item)"
+            }
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
