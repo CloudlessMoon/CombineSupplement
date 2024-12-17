@@ -56,6 +56,10 @@ class ExampleViewController: UIViewController {
                 self.name = "\(item)"
             }
         }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            self.name = "0"
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {

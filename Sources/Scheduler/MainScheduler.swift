@@ -14,9 +14,11 @@ public struct MainScheduler: Sendable {
     public static let instance = MainScheduler()
     public static let asyncInstance = MainScheduler(asynchronous: true)
     
+    private let numberEnqueued = AtomicInt(0)
+    
     private let isAsynchronous: Bool
     
-    private init(asynchronous: Bool = false) {
+    public init(asynchronous: Bool = false) {
         self.isAsynchronous = asynchronous
     }
     
@@ -36,10 +38,19 @@ extension MainScheduler: Scheduler {
     }
     
     public func schedule(options: SchedulerOptions?, _ action: @escaping () -> Void) {
-        if !self.isAsynchronous && DispatchQueue.threadSafe.isMain {
+        let previousNumberEnqueued = self.numberEnqueued.value
+        self.numberEnqueued.increment()
+        
+        if !self.isAsynchronous && previousNumberEnqueued == 0 && DispatchQueue.threadSafe.isMain {
             action()
+            
+            self.numberEnqueued.decrement()
         } else {
-            DispatchQueue.main.schedule(options: options, action)
+            DispatchQueue.main.schedule(options: options) {
+                action()
+                
+                self.numberEnqueued.decrement()
+            }
         }
     }
     
