@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name                  = "CombineSupplement"
-    s.version               = "1.2.2"
+    s.version               = "1.2.3"
     s.summary               = "Combine Supplement"
     s.homepage              = "https://github.com/jiasongs/CombineSupplement"
     s.license               = "MIT"
@@ -8,7 +8,6 @@ Pod::Spec.new do |s|
     s.source                = { :git => "https://github.com/jiasongs/CombineSupplement.git", :tag => "#{s.version}" }
     s.platform              = :ios, "13.0"
     s.swift_versions        = ["5.1"]
-    s.static_framework      = true
     s.requires_arc          = true
     s.framework             = "Combine"
 
