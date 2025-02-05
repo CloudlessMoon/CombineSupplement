@@ -8,10 +8,6 @@
 import Foundation
 import Combine
 
-private struct AssociatedKeys {
-    static var deallocated: UInt8 = 0
-}
-
 public extension CombineWrapper where Base: AnyObject {
     
     var deallocated: AnyPublisher<Void, Never> {
@@ -43,4 +39,8 @@ private final class DeinitPublisher {
         return self.subject.eraseToAnyPublisher()
     }
     
+}
+
+private struct AssociatedKeys {
+    static var deallocated: UInt8 = 0
 }

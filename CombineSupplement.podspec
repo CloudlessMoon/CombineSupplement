@@ -1,11 +1,11 @@
 Pod::Spec.new do |s|
     s.name                  = "CombineSupplement"
-    s.version               = "1.2.3"
+    s.version               = "2.0.0"
     s.summary               = "Combine Supplement"
-    s.homepage              = "https://github.com/jiasongs/CombineSupplement"
+    s.homepage              = "https://github.com/CloudlessMoon/CombineSupplement"
     s.license               = "MIT"
-    s.author                = { "ruanmei" => "jiasong@ruanmei.com" }
-    s.source                = { :git => "https://github.com/jiasongs/CombineSupplement.git", :tag => "#{s.version}" }
+    s.author                = "CloudlessMoon"
+    s.source                = { :git => "https://github.com/CloudlessMoon/CombineSupplement.git", :tag => "#{s.version}" }
     s.platform              = :ios, "13.0"
     s.swift_versions        = ["5.1"]
     s.requires_arc          = true

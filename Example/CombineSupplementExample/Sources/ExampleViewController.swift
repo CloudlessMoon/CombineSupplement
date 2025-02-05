@@ -15,7 +15,7 @@ class ExampleViewController: UIViewController {
         return ExampleView()
     }()
     
-    @CurrentValueRelayMainThreadWrapper
+    @CurrentValueRelayWrapper
     var name: String = "1"
     
     override func viewDidLoad() {

@@ -22,16 +22,13 @@ import ThreadSafe
         }
     }
     
-    public init(wrappedValue: Element, task: ReadWriteTask? = .init(label: "com.jiasong.combine-supplement.current-value-relay")) {
-        self.projectedValue = CurrentValueRelayProjected(wrappedValue: wrappedValue, task: task)
+    public init(wrappedValue: Element) {
+        self.projectedValue = CurrentValueRelayProjected(wrappedValue: wrappedValue)
     }
     
 }
 
 public final class CurrentValueRelayProjected<Element> {
-    
-    @UnfairLockValueWrapper
-    public var task: ReadWriteTask?
     
     public var publisher: AnyPublisher<Element, Never> {
         return self.relay.eraseToAnyPublisher()
@@ -39,28 +36,16 @@ public final class CurrentValueRelayProjected<Element> {
     
     private let relay: CurrentValueRelay<Element>
     
-    fileprivate init(wrappedValue: Element, task: ReadWriteTask?) {
+    fileprivate init(wrappedValue: Element) {
         self.relay = CurrentValueRelay(value: wrappedValue)
-        self.task = task
     }
     
     fileprivate var value: Element {
         get {
-            guard let task = self.task else {
-                return self.relay.value
-            }
-            return task.read {
-                return self.relay.value
-            }
+            return self.relay.value
         }
         set {
-            guard let task = self.task else {
-                self.relay.send(newValue)
-                return
-            }
-            task.write {
-                self.relay.send(newValue)
-            }
+            self.relay.send(newValue)
         }
     }
     

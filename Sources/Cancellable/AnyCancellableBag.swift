@@ -9,10 +9,6 @@ import Foundation
 import Combine
 import ThreadSafe
 
-private struct AssociatedKeys {
-    static var readWrite: UInt8 = 0
-}
-
 public protocol AnyCancellableBag: AnyObject {
     
     var cancellableBag: CancellableBag { get set }
@@ -31,11 +27,15 @@ public extension AnyCancellableBag {
     
     private var readWrite: ReadWriteValue<CancellableBag> {
         let initialize = {
-            let value = ReadWriteValue(CancellableBag(), task: ReadWriteTask(label: "com.jiasong.combine-supplement.cancellable-bag"))
+            let value = ReadWriteValue(CancellableBag(), task: ReadWriteTask(label: "com.cloudlessmoon.combine-supplement.cancellable-bag"))
             objc_setAssociatedObject(self, &AssociatedKeys.readWrite, value, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             return value
         }
         return (objc_getAssociatedObject(self, &AssociatedKeys.readWrite) as? ReadWriteValue<CancellableBag>) ?? initialize()
     }
     
+}
+
+private struct AssociatedKeys {
+    static var readWrite: UInt8 = 0
 }
