@@ -34,12 +34,6 @@ public final class CurrentValueRelayProjected<Element> {
         return self.relay.eraseToAnyPublisher()
     }
     
-    private let relay: CurrentValueRelay<Element>
-    
-    fileprivate init(wrappedValue: Element) {
-        self.relay = CurrentValueRelay(value: wrappedValue)
-    }
-    
     fileprivate var value: Element {
         get {
             return self.relay.value
@@ -47,6 +41,12 @@ public final class CurrentValueRelayProjected<Element> {
         set {
             self.relay.send(newValue)
         }
+    }
+    
+    private let relay: CurrentValueRelay<Element>
+    
+    fileprivate init(wrappedValue: Element) {
+        self.relay = CurrentValueRelay(value: wrappedValue)
     }
     
 }
