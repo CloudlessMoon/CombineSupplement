@@ -28,6 +28,14 @@ import ThreadSafe
     
 }
 
+extension CurrentValueRelayWrapper: CustomStringConvertible {
+    
+    public var description: String {
+        return String(describing: self.wrappedValue)
+    }
+    
+}
+
 public final class CurrentValueRelayProjected<Element> {
     
     public var publisher: AnyPublisher<Element, Never> {
