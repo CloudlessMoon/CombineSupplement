@@ -10,11 +10,14 @@ import ThreadSafe
 
 public final class AtomicInt: @unchecked Sendable {
     
-    @UnfairLockValueWrapper
-    public private(set) var value: UInt
+    public var value: UInt {
+        return self.lockValue.value
+    }
+    
+    private let lockValue: UnfairLockValue<UInt>
     
     public init(_ value: UInt) {
-        self.value = value
+        self.lockValue = UnfairLockValue(value)
     }
     
 }
@@ -23,7 +26,7 @@ extension AtomicInt {
     
     @discardableResult
     public func mutating(execute work: (inout UInt) throws -> Void) rethrows -> UInt {
-        return try self.$value.mutating(execute: work)
+        return try self.lockValue.mutating(execute: work)
     }
     
 }
