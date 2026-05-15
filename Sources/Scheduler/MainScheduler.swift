@@ -38,18 +38,17 @@ extension MainScheduler: Scheduler {
     }
     
     public func schedule(options: SchedulerOptions?, _ action: @escaping () -> Void) {
-        let previousNumberEnqueued = self.numberEnqueued.value
-        self.numberEnqueued.increment()
+        let numberEnqueued = self.numberEnqueued.mutating { $0 += 1 }
         
-        if !self.isAsynchronous && previousNumberEnqueued == 0 && DispatchQueue.threadSafe.isMain {
+        if !self.isAsynchronous && numberEnqueued == 1 && DispatchQueue.threadSafe.isMain {
             action()
             
-            self.numberEnqueued.decrement()
+            self.numberEnqueued.mutating { $0 -= 1 }
         } else {
             DispatchQueue.main.schedule(options: options) {
                 action()
                 
-                self.numberEnqueued.decrement()
+                self.numberEnqueued.mutating { $0 -= 1 }
             }
         }
     }
