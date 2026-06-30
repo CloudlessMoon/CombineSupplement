@@ -21,11 +21,11 @@ public extension CombineWrapper where Base: AnyObject {
     }
     
     private var _cancellableBag: UnfairLockValue<CancellableBag> {
-        if let cancellableBag = objc_getAssociatedObject(self, &AssociatedKeys.cancellableBag) as? UnfairLockValue<CancellableBag> {
+        if let cancellableBag = objc_getAssociatedObject(self.base, &AssociatedKeys.cancellableBag) as? UnfairLockValue<CancellableBag> {
             return cancellableBag
         } else {
             let cancellableBag = UnfairLockValue(CancellableBag())
-            objc_setAssociatedObject(self, &AssociatedKeys.cancellableBag, cancellableBag, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            objc_setAssociatedObject(self.base, &AssociatedKeys.cancellableBag, cancellableBag, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             return cancellableBag
         }
     }
