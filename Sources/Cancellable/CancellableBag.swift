@@ -13,11 +13,9 @@ public final class CancellableBag {
     
     @resultBuilder
     public enum Builder {
-        
         public static func buildBlock(_ cancellables: Cancellable...) -> [Cancellable] {
             return cancellables
         }
-        
     }
     
     private let lock = UnfairLock()
@@ -29,25 +27,20 @@ public final class CancellableBag {
         
     }
     
+    public init(cancellables: Cancellable...) {
+        self.cancellables += cancellables
+    }
+    
+    public init(cancellables: [Cancellable]) {
+        self.cancellables += cancellables
+    }
+    
+    public init(@Builder builder: () -> [Cancellable]) {
+        self.cancellables += builder()
+    }
+    
     deinit {
         self.cancel()
-    }
-    
-}
-
-extension CancellableBag {
-    
-    public convenience init(cancelling cancellables: Cancellable...) {
-        self.init(cancelling: cancellables)
-    }
-    
-    public convenience init(@Builder builder: () -> [Cancellable]) {
-        self.init(cancelling: builder())
-    }
-    
-    public convenience init(cancelling cancellables: [Cancellable]) {
-        self.init()
-        self.cancellables += cancellables
     }
     
 }
@@ -63,37 +56,41 @@ extension CancellableBag {
     }
     
     public func insert(_ cancellables: [Cancellable]) {
-        self.lock.withLock {
+        let current: [Cancellable]? = self.lock.withLock {
             guard !self.isCancelled else {
-                cancellables.forEach { $0.cancel() }
-                return
+                return cancellables
             }
             self.cancellables += cancellables
+            return nil
+        }
+        current?.forEach {
+            $0.cancel()
         }
     }
     
     public func insert(_ cancellable: Cancellable) {
-        self.lock.withLock {
+        let current: Cancellable? = self.lock.withLock {
             guard !self.isCancelled else {
-                cancellable.cancel()
-                return
+                return cancellable
             }
             self.cancellables.append(cancellable)
+            return nil
         }
+        current?.cancel()
     }
     
-}
-
-extension CancellableBag {
-    
-    private func cancel() {
-        self.lock.withLock {
-            self.isCancelled = true
-            
-            self.cancellables.removeAll {
-                $0.cancel()
-                return true
+    public func cancel() {
+        let current: [Cancellable]? = self.lock.withLock {
+            let cancellables = self.cancellables
+            guard !self.isCancelled || !cancellables.isEmpty else {
+                return nil
             }
+            self.isCancelled = true
+            self.cancellables.removeAll()
+            return cancellables
+        }
+        current?.forEach {
+            $0.cancel()
         }
     }
     
