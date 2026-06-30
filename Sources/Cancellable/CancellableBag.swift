@@ -9,15 +9,16 @@ import Foundation
 import Combine
 import ThreadSafe
 
-extension Cancellable {
-    
-    public func cancelled(by bag: CancellableBag) {
-        bag.insert(self)
-    }
-    
-}
-
 public final class CancellableBag {
+    
+    @resultBuilder
+    public enum Builder {
+        
+        public static func buildBlock(_ cancellables: Cancellable...) -> [Cancellable] {
+            return cancellables
+        }
+        
+    }
     
     private let lock = UnfairLock()
     
@@ -32,38 +33,15 @@ public final class CancellableBag {
         self.cancel()
     }
     
-    public func insert(_ cancellable: Cancellable) {
-        self.lock.withLock {
-            guard !self.isCancelled else {
-                cancellable.cancel()
-                return
-            }
-            self.cancellables.append(cancellable)
-        }
-    }
-    
-    private func cancel() {
-        self.lock.withLock {
-            self.isCancelled = true
-            
-            self.cancellables.removeAll {
-                $0.cancel()
-                return true
-            }
-        }
-    }
-    
 }
 
-/// Convenience
 extension CancellableBag {
     
     public convenience init(cancelling cancellables: Cancellable...) {
-        self.init()
-        self.cancellables += cancellables
+        self.init(cancelling: cancellables)
     }
     
-    public convenience init(@CancellableBuilder builder: () -> [Cancellable]) {
+    public convenience init(@Builder builder: () -> [Cancellable]) {
         self.init(cancelling: builder())
     }
     
@@ -72,11 +50,15 @@ extension CancellableBag {
         self.cancellables += cancellables
     }
     
+}
+
+extension CancellableBag {
+    
     public func insert(_ cancellables: Cancellable...) {
         self.insert(cancellables)
     }
     
-    public func insert(@CancellableBuilder builder: () -> [Cancellable]) {
+    public func insert(@Builder builder: () -> [Cancellable]) {
         self.insert(builder())
     }
     
@@ -90,13 +72,29 @@ extension CancellableBag {
         }
     }
     
-    @resultBuilder
-    public struct CancellableBuilder {
-        
-        public static func buildBlock(_ cancellables: Cancellable...) -> [Cancellable] {
-            return cancellables
+    public func insert(_ cancellable: Cancellable) {
+        self.lock.withLock {
+            guard !self.isCancelled else {
+                cancellable.cancel()
+                return
+            }
+            self.cancellables.append(cancellable)
         }
-        
+    }
+    
+}
+
+extension CancellableBag {
+    
+    private func cancel() {
+        self.lock.withLock {
+            self.isCancelled = true
+            
+            self.cancellables.removeAll {
+                $0.cancel()
+                return true
+            }
+        }
     }
     
 }

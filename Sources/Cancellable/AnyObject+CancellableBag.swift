@@ -1,5 +1,5 @@
 //
-//  AnyCancellableBag.swift
+//  AnyObject+CancellableBag.swift
 //  CombineSupplement
 //
 //  Created by jiasong on 2023/6/1.
@@ -9,12 +9,7 @@ import Foundation
 import Combine
 import ThreadSafe
 
-public protocol AnyCancellableBag: AnyObject {
-    
-    var cancellableBag: CancellableBag { get set }
-}
-
-public extension AnyCancellableBag {
+public extension CombineWrapper where Base: AnyObject {
     
     var cancellableBag: CancellableBag {
         get {

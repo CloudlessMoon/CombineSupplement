@@ -41,6 +41,6 @@ private final class DeinitPublisher {
     
 }
 
-private struct AssociatedKeys {
+private enum AssociatedKeys {
     static var deallocated: UInt8 = 0
 }
