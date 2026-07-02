@@ -7,23 +7,36 @@
 
 import Foundation
 import Combine
-import ThreadSafe
 
-@propertyWrapper public final class CurrentValueRelayWrapper<Element> {
+@propertyWrapper public struct CurrentValueRelayWrapper<Value> {
     
-    public let projectedValue: CurrentValueRelayProjected<Element>
-    
-    public var wrappedValue: Element {
+    public static subscript<EnclosingSelf: AnyObject>(
+        _enclosingInstance object: EnclosingSelf,
+        wrapped wrappedKeyPath: ReferenceWritableKeyPath<EnclosingSelf, Value>,
+        storage storageKeyPath: ReferenceWritableKeyPath<EnclosingSelf, Self>
+    ) -> Value {
         get {
-            return self.projectedValue.value
+            return object[keyPath: storageKeyPath].relay.value
         }
         set {
-            self.projectedValue.value = newValue
+            object[keyPath: storageKeyPath].relay.send(newValue)
         }
     }
     
-    public init(wrappedValue: Element) {
-        self.projectedValue = CurrentValueRelayProjected(wrappedValue: wrappedValue)
+    public var projectedValue: CurrentValueRelayProjected<Value> {
+        return CurrentValueRelayProjected(self.relay)
+    }
+    
+    @available(*, unavailable, message: "@CurrentValueRelayWrapper is only available on properties of classes")
+    public var wrappedValue: Value {
+        get { fatalError() }
+        set { fatalError() }
+    }
+    
+    private let relay: CurrentValueRelay<Value>
+    
+    public init(wrappedValue: Value) {
+        self.relay = CurrentValueRelay(value: wrappedValue)
     }
     
 }
@@ -31,30 +44,25 @@ import ThreadSafe
 extension CurrentValueRelayWrapper: CustomStringConvertible {
     
     public var description: String {
-        return String(describing: self.wrappedValue)
+        return String(describing: self.relay.value)
     }
     
 }
 
-public final class CurrentValueRelayProjected<Element> {
+public struct CurrentValueRelayProjected<Value> {
     
-    public var publisher: AnyPublisher<Element, Never> {
+    private let relay: CurrentValueRelay<Value>
+    
+    fileprivate init(_ relay: CurrentValueRelay<Value>) {
+        self.relay = relay
+    }
+    
+}
+
+extension CurrentValueRelayProjected {
+    
+    public var publisher: AnyPublisher<Value, Never> {
         return self.relay.eraseToAnyPublisher()
-    }
-    
-    fileprivate var value: Element {
-        get {
-            return self.relay.value
-        }
-        set {
-            self.relay.send(newValue)
-        }
-    }
-    
-    private let relay: CurrentValueRelay<Element>
-    
-    fileprivate init(wrappedValue: Element) {
-        self.relay = CurrentValueRelay(value: wrappedValue)
     }
     
 }
