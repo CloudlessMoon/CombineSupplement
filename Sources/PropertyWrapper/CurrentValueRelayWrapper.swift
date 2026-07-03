@@ -27,7 +27,7 @@ import Combine
         return CurrentValueRelayProjected(self.relay)
     }
     
-    @available(*, unavailable, message: "@CurrentValueRelayWrapper is only available on properties of classes")
+    @available(*, unavailable, message: "the propertyWrapper is only available on properties of classes")
     public var wrappedValue: Value {
         get { fatalError() }
         nonmutating set { fatalError() }
