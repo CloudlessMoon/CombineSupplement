@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.homepage              = "https://github.com/CloudlessMoon/CombineSupplement"
   s.license               = "MIT"
   s.author                = "CloudlessMoon"
-  s.source                = { :git => "https://github.com/CloudlessMoon/CombineSupplement.git", :tag => "#{s.version}" }
+  s.source                = { :git => "https://github.com/CloudlessMoon/CombineSupplement.git", :tag => s.version.to_s }
 
   # Core dependency
   s.dependency "ThreadSafe", "~> 2.0"
