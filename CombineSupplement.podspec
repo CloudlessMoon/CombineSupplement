@@ -1,15 +1,17 @@
 Pod::Spec.new do |s|
   s.name                  = "CombineSupplement"
+
+  s.version               = "5.0.0"
+  s.platform              = :ios, "15.0"
+  s.swift_versions        = ["5.9"]
+  s.requires_arc          = true
+  s.frameworks            = ["Combine"]
+
   s.summary               = "Combine Supplement"
   s.homepage              = "https://github.com/CloudlessMoon/CombineSupplement"
   s.license               = "MIT"
   s.author                = "CloudlessMoon"
   s.source                = { :git => "https://github.com/CloudlessMoon/CombineSupplement.git", :tag => "#{s.version}" }
-  s.version               = '5.0.0'
-  s.platform              = :ios, '15.0'
-  s.swift_versions        = ['5.9']
-  s.requires_arc          = true
-  s.framework             = "Combine"
 
   # Core dependency
   s.dependency "ThreadSafe", "~> 2.0"
