@@ -1,17 +1,17 @@
 Pod::Spec.new do |s|
-  s.name                  = "CombineSupplement"
+  s.name = "CombineSupplement"
 
-  s.version               = "5.0.0"
-  s.platform              = :ios, "15.0"
-  s.swift_versions        = ["5.9"]
-  s.requires_arc          = true
-  s.frameworks            = ["Combine"]
+  s.version = "5.0.0"
+  s.platforms = { :ios => "15.0" }
+  s.swift_versions = ["5.9"]
+  s.requires_arc = true
+  s.frameworks = ["Combine"]
 
-  s.summary               = "Combine Supplement"
-  s.homepage              = "https://github.com/CloudlessMoon/CombineSupplement"
-  s.license               = "MIT"
-  s.author                = "CloudlessMoon"
-  s.source                = { :git => "https://github.com/CloudlessMoon/CombineSupplement.git", :tag => s.version.to_s }
+  s.summary = "Combine Supplement"
+  s.homepage = "https://github.com/CloudlessMoon/CombineSupplement"
+  s.license = "MIT"
+  s.author = "CloudlessMoon"
+  s.source = { :git => "https://github.com/CloudlessMoon/CombineSupplement.git", :tag => s.version.to_s }
 
   # Core dependency
   s.dependency "ThreadSafe", "~> 2.0"
